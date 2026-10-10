@@ -62,6 +62,13 @@ pedidosDias = []
 pedidosTotal = []
 pedidosEstado = []
 
+# ==========================================================
+# VENTAS POR TIPO DE CAFE (listas paralelas)
+# ==========================================================
+tiposCafe = ["Blend Premium", "Cafe Tradicion", "Cafe Catuai", "Cafe Geisha"]
+unidadesCafe = [0, 0, 0, 0]
+montosCafe = [0.0, 0.0, 0.0, 0.0]
+
 
 # ==========================================================
 # FUNCIONES
@@ -204,6 +211,44 @@ def reporteDiario():
     print(f"  - Delivery:      {totalDelivery}")
     print(f"  - Recojo:        {totalRecojo}")
     print(f"Total vendido:     S/ {totalVendido:.2f}\n")
+
+
+def ordenarSeleccion(nombres, valores, otros):
+    n = len(valores)
+    for i in range(n - 1):
+        posMayor = i
+        for j in range(i + 1, n):
+            if valores[j] > valores[posMayor]:
+                posMayor = j
+        auxValor = valores[i]
+        valores[i] = valores[posMayor]
+        valores[posMayor] = auxValor
+
+        auxNombre = nombres[i]
+        nombres[i] = nombres[posMayor]
+        nombres[posMayor] = auxNombre
+
+        auxOtro = otros[i]
+        otros[i] = otros[posMayor]
+        otros[posMayor] = auxOtro
+
+def reporteProductosMasVendidos():
+    nombres = tiposCafe[:]
+    unidades = unidadesCafe[:]
+    montos = montosCafe[:]
+
+    ordenarSeleccion(nombres, montos, unidades)
+
+    print("\n================================================================")
+    print("              PRODUCTOS MAS VENDIDOS - FINCA GRANDEZ")
+    print("================================================================")
+    print(f"{'Puesto':<9}{'Tipo de cafe':<19}{'Venta total':<15}Unidades vendidas")
+
+    for i in range(len(nombres)):
+        print(f"[{i + 1}]      {nombres[i]:<19}S/ {montos[i]:<12.2f}{unidades[i]} und.")
+
+    print("================================================================\n")
+
 
 
 def mostrarBoleta():
@@ -365,8 +410,9 @@ while True:
                 print("2. Realizar un Pedido")
                 print("3. Buscar un Pedido")
                 print("4. Reporte Diario de Pedidos")
-                print("5. Cerrar sesion")
-                opcionMenu = input("Ingrese una opcion (1-5): ")
+                print("5. Reportes de Productos Mas Vendidos")
+                print("6. Cerrar sesion")
+                opcionMenu = input("Ingrese una opcion (1-6): ")
 
                 # ------------------------------------------
                 # 1. VER CATALOGO
@@ -602,6 +648,18 @@ while True:
                     else:
                         pedidosEstado.append("Pagado - Listo para recojo")
 
+                    # ---- SUMAR VENTA AL TIPO DE CAFE ----
+                    if productoElegido <= 3:
+                        posCafe = 0
+                    elif productoElegido <= 6:
+                        posCafe = 1
+                    elif productoElegido <= 8:
+                        posCafe = 2
+                    else:
+                        posCafe = 3
+                    unidadesCafe[posCafe] = unidadesCafe[posCafe] + cantidad
+                    montosCafe[posCafe] = montosCafe[posCafe] + subtotal
+
                     # ---- BOLETA / FACTURA FINAL ----
                     mostrarBoleta()
                     input("Presione Enter para continuar...")
@@ -621,9 +679,16 @@ while True:
                     input("Presione Enter para continuar...")
 
                 # ------------------------------------------
-                # 5. CERRAR SESION
+                # 5. REPORTES DE PRODUCTOS MAS VENDIDOS
                 # ------------------------------------------
                 elif opcionMenu == "5":
+                    reporteProductosMasVendidos()
+                    input("Presione Enter para continuar...")
+
+                # ------------------------------------------
+                # 6. CERRAR SESION
+                # ------------------------------------------
+                elif opcionMenu == "6":
                     print("\nCerrando sesion...\n")
                     sesionIniciada = False
 
